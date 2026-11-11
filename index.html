@@ -809,6 +809,26 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
   transform:translateY(-50%); pointer-events:none; z-index:4;
 }
 #scr-slots .cabinet.celebrate .payline{border-top-color:rgba(242,193,78,0.9)}
+#scr-slots .reel.win-glow{
+  box-shadow:inset 0 3px 8px rgba(0,0,0,0.28), inset 0 -3px 8px rgba(0,0,0,0.18), 0 0 0 3px var(--sl-gold), 0 0 20px 5px rgba(242,193,78,0.85);
+}
+#scr-slots .reel.win-glow .reel-item .glyph{animation:slWinPop .5s ease-in-out infinite alternate}
+@keyframes slWinPop{from{transform:scale(1)} to{transform:scale(1.1)}}
+#scr-slots .fs-banner{
+  display:none;
+  align-items:center; justify-content:center;
+  margin-bottom:11px;
+  background:linear-gradient(180deg,#e9b64a,#c9962e);
+  border:2px solid #ffe9a8;
+  border-radius:14px;
+  padding:9px 10px;
+  font-size:24px; font-weight:900; letter-spacing:.02em; line-height:1.2;
+  color:#5d0808;
+  text-align:center;
+  box-shadow:0 4px 0 #6e4d08, 0 8px 16px rgba(0,0,0,.35);
+}
+#scr-slots .fs-banner.show{display:flex; animation:slFsPulse 1s ease-in-out infinite}
+@keyframes slFsPulse{0%,100%{filter:brightness(1)} 50%{filter:brightness(1.14)}}
 #scr-slots .message{
   min-height:56px;
   display:flex; align-items:center; justify-content:center;
@@ -892,6 +912,8 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 @media (prefers-reduced-motion: reduce){
   #scr-slots .cabinet.celebrate .lights span{animation:none}
   #scr-slots .reel.landed{animation:none}
+  #scr-slots .reel.win-glow .reel-item .glyph{animation:none}
+  #scr-slots .fs-banner.show{animation:none}
 }
 </style>
 
@@ -1276,6 +1298,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
           <div class="value" id="winVal">0</div>
         </div>
       </div>
+      <div class="fs-banner" id="fsBanner" role="status"></div>
       <div class="reel-window">
         <div class="reels">
           <div class="reel" id="reel0"><div class="reel-strip"></div></div>
@@ -2673,13 +2696,21 @@ var SL_STR = {
     tripleWin: "Three {name}! You win {n} coins!",
     jackpot: "JACKPOT! Three Fortune! You win {n} coins!",
     bigWin: "BIG WIN! You win {n} coins!",
+    freeSpins: "🎉 {n} FREE SPINS LEFT",
+    fsStart: "🔔 Three Bells! 5 FREE SPINS!",
+    fsAgain: "🔔 Three Bells again! +5 FREE SPINS!",
+    fsEnd: "Free spins over — you won {n} coins!",
+    fsEndNone: "Free spins over!",
+    wildNote: "福 is wild — it helped!",
+    wildWhat: "Wild! 福 counts as any picture",
+    bellWhat: "Three bells start 5 FREE SPINS",
     bonus: "Lucky bonus! +{n} free coins.",
     notEnough: "Not enough coins — here is a lucky bonus!",
     threeOf: "Three {name}",
     anyPair: "Any two the same",
     pairPays: "pays 2× your bet",
     triplePays: "pays {n}× your bet",
-    howTo: "Tap SPIN to play. Three of the same picture wins the big prize, and any two the same wins too. Coins are just for fun — tap Free Coins any time you want more.",
+    howTo: "Tap SPIN to play. Three of the same picture wins the big prize, and any two the same wins too. The 福 is wild — it counts as any picture. Three bells starts 5 free spins. Coins are just for fun — tap Free Coins any time you want more.",
     stats: "Spins {s} · Wins {w}",
     soundCredit: "Reel sounds by SFXMint (CC0). Win, coin and jackpot sounds by Alexander, Orange Free Sounds, CC BY-NC 4.0."
   },
@@ -2693,13 +2724,21 @@ var SL_STR = {
     tripleWin: "三个{name}！您赢了 {n} 金币！",
     jackpot: "大奖！三个福！您赢了 {n} 金币！",
     bigWin: "大赢！您赢了 {n} 金币！",
+    freeSpins: "🎉 还剩 {n} 次免费旋转",
+    fsStart: "🔔 三个铃铛！5 次免费旋转！",
+    fsAgain: "🔔 又是三个铃铛！再加 5 次免费旋转！",
+    fsEnd: "免费旋转结束 — 一共赢了 {n} 金币！",
+    fsEndNone: "免费旋转结束！",
+    wildNote: "福是百搭 — 它帮上忙了！",
+    wildWhat: "百搭！福可以代替任何图案",
+    bellWhat: "三个铃铛开启 5 次免费旋转",
     bonus: "幸运奖励！+{n} 免费金币。",
     notEnough: "金币不够了 — 送您一个幸运奖励！",
     threeOf: "三个{name}",
     anyPair: "任意两个相同",
     pairPays: "赔下注的 2 倍",
     triplePays: "赔下注的 {n} 倍",
-    howTo: "点“转一转”开始。三个相同的图案赢大奖，任意两个相同也能赢。金币只是玩玩的 — 想要更多，随时点“免费金币”。",
+    howTo: "点“转一转”开始。三个相同的图案赢大奖，任意两个相同也能赢。福是百搭，可以代替任何图案。三个铃铛开启 5 次免费旋转。金币只是玩玩的 — 想要更多，随时点“免费金币”。",
     stats: "转了 {s} 次 · 赢了 {w} 次",
     soundCredit: "Reel sounds by SFXMint (CC0). Win, coin and jackpot sounds by Alexander, Orange Free Sounds, CC BY-NC 4.0."
   }
@@ -2717,6 +2756,10 @@ var slState = {
   wins: 0,
   loseStreak: 0,
   spinning: false,
+  freeSpins: 0,
+  freeMode: false,
+  freeTotal: 0,
+  freeTimer: null,
   display: ["fu", "orange", "cherry"]
 };
 
@@ -2897,9 +2940,10 @@ function buildResult(kind){
     res[oddPos] = slPick(others);
     return res;
   }
-  var pool = SL_SYMBOLS.map(function(s){ return s.id; });
+  /* a loss must stay a loss: with 福 wild, any 福 on the line completes
+     at least a pair, so losing spins never show one */
+  var pool = SL_SYMBOLS.map(function(s){ return s.id; }).filter(function(id){ return id !== "fu"; });
   var out = [];
-  if (Math.random() < 0.3){ out.push("fu"); pool.splice(pool.indexOf("fu"), 1); }
   while (out.length < 3){
     var c = slPick(pool);
     pool.splice(pool.indexOf(c), 1);
@@ -2911,11 +2955,46 @@ function buildResult(kind){
   }
   return out;
 }
+/* 福 is WILD: it stands in for any picture. The best reading of the
+   line wins — two of a kind + 福 is three of a kind, two 福 + anything
+   is three of that thing, and 福 + two different pictures is a pair.
+   Returns the winning reel positions too, so they can light up. */
 function slEvaluate(result){
-  var a = result[0], b = result[1], c = result[2];
-  if (a === b && b === c) return { mult: slById[a].triple, sym: a, triple: true };
-  if (a === b || b === c || a === c) return { mult: SL_PAIR_PAY, sym: null, triple: false };
-  return { mult: 0, sym: null, triple: false };
+  var fuCount = 0;
+  result.forEach(function(id){ if (id === "fu") fuCount++; });
+  function positionsOf(id){
+    var p = [];
+    result.forEach(function(x, i){ if (x === id || x === "fu") p.push(i); });
+    return p;
+  }
+  if (fuCount === 3){
+    return { mult: slById.fu.triple, sym: "fu", triple: true, wildUsed: false, positions: [0, 1, 2] };
+  }
+  var best = null;
+  SL_SYMBOLS.forEach(function(s){
+    if (s.id === "fu") return;
+    var cnt = 0;
+    result.forEach(function(x){ if (x === s.id) cnt++; });
+    if (cnt > 0 && cnt + fuCount === 3 && (!best || s.triple > best.mult)){
+      best = { mult: s.triple, sym: s.id, triple: true, wildUsed: fuCount > 0, positions: positionsOf(s.id) };
+    }
+  });
+  if (best) return best;
+  for (var i = 0; i < SL_SYMBOLS.length; i++){
+    var s2 = SL_SYMBOLS[i];
+    if (s2.id === "fu") continue;
+    var pos = [];
+    result.forEach(function(x, idx){ if (x === s2.id) pos.push(idx); });
+    if (pos.length === 2){
+      return { mult: SL_PAIR_PAY, sym: s2.id, triple: false, wildUsed: false, positions: pos };
+    }
+  }
+  if (fuCount === 1){
+    var fuPos = result.indexOf("fu");
+    var otherPos = fuPos === 0 ? 1 : 0;
+    return { mult: SL_PAIR_PAY, sym: result[otherPos], triple: false, wildUsed: true, positions: [fuPos, otherPos] };
+  }
+  return { mult: 0, sym: null, triple: false, wildUsed: false, positions: [] };
 }
 
 /* ================= rendering ================= */
@@ -2951,8 +3030,9 @@ function slRenderAll(){
   $("winVal").textContent = fmtCoins(slState.lastWin);
   $("betVal").textContent = fmtCoins(SL_BETS[slState.betIdx]);
   $("slStats").textContent = slFill(slT("stats"), { s: slState.spins, w: slState.wins });
-  $("betDown").disabled = slState.spinning || slState.betIdx === 0;
-  $("betUp").disabled = slState.spinning || slState.betIdx === SL_BETS.length - 1;
+  var busy = slState.spinning || slState.freeSpins > 0;
+  $("betDown").disabled = busy || slState.betIdx === 0;
+  $("betUp").disabled = busy || slState.betIdx === SL_BETS.length - 1;
 }
 function slRenderPaytable(){
   var rows = SL_SYMBOLS.map(function(s){
@@ -2967,6 +3047,10 @@ function slRenderPaytable(){
     '<span class="sym" style="opacity:.35">？</span>' +
     '<span class="what">' + slT("anyPair") + "</span>" +
     '<span class="pays">' + slT("pairPays") + "</span></div>";
+  rows += '<div class="row"><span class="sym fu">福</span>' +
+    '<span class="what">' + slT("wildWhat") + '</span><span class="pays">★</span></div>';
+  rows += '<div class="row"><span class="sym">🔔</span><span class="sym">🔔</span><span class="sym">🔔</span>' +
+    '<span class="what">' + slT("bellWhat") + '</span><span class="pays">★</span></div>';
   rows += "<p>" + slT("howTo") + "</p>";
   rows += '<p style="font-size:14px;opacity:.7;margin-top:12px">' + slT("soundCredit") + "</p>";
   $("paytable").innerHTML = rows;
@@ -2979,12 +3063,34 @@ function slApplyLang(){
   });
   slRenderPaytable();
   slRenderAll();
-  if (!slState.spinning) slSetMessage(slT("goodLuck"), "");
+  slRenderFsBanner();
+  if (!slState.spinning && slState.freeSpins === 0) slSetMessage(slT("goodLuck"), "");
 }
 function slSetMessage(txt, cls){
   var m = $("slMessage");
   m.textContent = txt;
   m.className = "message" + (cls ? " " + cls : "");
+}
+function slAppendMessage(txt){
+  var m = $("slMessage");
+  m.textContent = m.textContent + " " + txt;
+}
+function slRenderFsBanner(){
+  var b = $("fsBanner");
+  if (slState.freeSpins > 0){
+    b.textContent = slFill(slT("freeSpins"), { n: slState.freeSpins });
+    b.classList.add("show");
+  } else {
+    b.classList.remove("show");
+  }
+}
+function slSetGlow(positions){
+  reelEls.forEach(function(r, i){
+    r.classList.toggle("win-glow", positions.indexOf(i) >= 0);
+  });
+}
+function slClearGlow(){
+  reelEls.forEach(function(r){ r.classList.remove("win-glow"); });
 }
 
 /* ================= spin ================= */
@@ -3040,22 +3146,28 @@ function spinReel(idx, finalId, duration, done){
     done();
   }, duration);
 }
-function spin(){
+function spin(){ startSpin(false); }
+function startSpin(isFree){
   if (slState.spinning) return;
+  if (!isFree && slState.freeSpins > 0) return; /* free spins are playing */
   slAudio();
   var bet = SL_BETS[slState.betIdx];
-  if (window.WALLET < bet){
-    walletAdd(200);
-    slSetMessage(slT("notEnough") + " " + slFill(slT("bonus"), { n: 200 }), "win");
-    sndCoin();
-    slRenderAll();
-    return;
+  if (!isFree){
+    if (window.WALLET < bet){
+      walletAdd(200);
+      slSetMessage(slT("notEnough") + " " + slFill(slT("bonus"), { n: 200 }), "win");
+      sndCoin();
+      slRenderAll();
+      return;
+    }
+    walletSet(window.WALLET - bet);
   }
+  slState.freeMode = !!isFree;
   slState.spinning = true;
   slState.spins++;
-  walletSet(window.WALLET - bet);
   slState.lastWin = 0;
   $("cabinet").classList.remove("celebrate");
+  slClearGlow();
   slSetMessage(slT("spinning"), "");
   $("spinBtn").disabled = true;
   slRenderAll();
@@ -3081,12 +3193,14 @@ function finishSpin(result, bet){
   slState.display = result.slice();
   var ev = slEvaluate(result);
   var payout = ev.mult * bet;
+  var wasFree = slState.freeMode;
+  slState.freeMode = false;
   slState.spinning = false;
-  $("spinBtn").disabled = false;
   if (payout > 0){
     slState.wins++;
     slState.loseStreak = 0;
     slState.lastWin = payout;
+    slSetGlow(ev.positions);
     var big = ev.mult >= 20;
     var huge = ev.triple && ev.sym === "fu";
     var from = window.WALLET;
@@ -3097,11 +3211,40 @@ function finishSpin(result, bet){
     else if (big) slSetMessage(slFill(slT("bigWin"), { n: fmtCoins(payout) }), "win bigwin");
     else if (ev.triple) slSetMessage(slFill(slT("tripleWin"), { name: isZh() ? slById[ev.sym].zh : slById[ev.sym].en, n: fmtCoins(payout) }), "win");
     else slSetMessage(slFill(slT("pairWin"), { n: fmtCoins(payout) }), "win");
+    if (ev.wildUsed) slAppendMessage(slT("wildNote"));
     sndWin(big, huge);
     slCelebrate(big, huge);
   } else {
     slState.loseStreak++;
     slSetMessage(slT("tryAgain"), "");
+  }
+  /* ---- free spins: three bells start 5, auto-played at the same bet.
+     A wild 福 can complete the bells, and bells in free spins add 5 more. */
+  if (wasFree) slState.freeTotal += payout;
+  var bellTriple = ev.triple && ev.sym === "bell";
+  if (bellTriple){
+    slState.freeSpins += 5;
+    slSetMessage(slT(wasFree ? "fsAgain" : "fsStart"), "win bigwin");
+    if (ev.wildUsed) slAppendMessage(slT("wildNote"));
+    buzz([60, 40, 90]);
+  }
+  if (wasFree) slState.freeSpins = Math.max(0, slState.freeSpins - 1);
+  slRenderFsBanner();
+  var slotsActive = document.getElementById("scr-slots").classList.contains("active");
+  if (slState.freeSpins > 0 && slotsActive){
+    $("spinBtn").disabled = true;
+    slState.freeTimer = setTimeout(function(){
+      slState.freeTimer = null;
+      startSpin(true);
+    }, bellTriple ? 2400 : 1600);
+  } else {
+    if (slState.freeSpins > 0){ slState.freeSpins = 0; slRenderFsBanner(); }
+    $("spinBtn").disabled = false;
+    if (wasFree && slotsActive && !bellTriple){
+      if (slState.freeTotal > 0) slSetMessage(slFill(slT("fsEnd"), { n: fmtCoins(slState.freeTotal) }), "win");
+      else slSetMessage(slT("fsEndNone"), "");
+    }
+    if (wasFree) slState.freeTotal = 0;
   }
   slRenderAll();
   $("slCreditsVal").textContent = fmtCoins(window.WALLET);
@@ -3124,6 +3267,16 @@ document.addEventListener("keydown", function(e){
 document.addEventListener("pointerdown", function(){ slAudio(); }, { passive: true });
 document.addEventListener("touchend", function(){ slAudio(); }, { passive: true });
 document.addEventListener("langchange", slApplyLang);
+document.addEventListener("screenchange", function(e){
+  if (e.detail && e.detail.screen !== "slots" && slState.freeTimer){
+    clearTimeout(slState.freeTimer);
+    slState.freeTimer = null;
+    slState.freeSpins = 0;
+    slState.freeTotal = 0;
+    slRenderFsBanner();
+    slRenderAll();
+  }
+});
 document.addEventListener("walletchange", function(){
   $("slCreditsVal").textContent = fmtCoins(window.WALLET);
 });
