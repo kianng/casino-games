@@ -417,28 +417,69 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 #scr-mahjong .table button.primary, #scr-mahjong .overlay button.primary{background:var(--mj-accent); border-color:var(--mj-accent); color:#fff}
 #scr-mahjong .table button.goldb{background:var(--mj-gold); border-color:var(--mj-gold); color:#221a02}
 
-#scr-mahjong .mj-roundline{
-  flex:0 0 auto; text-align:center;
-  font-size:14px; font-weight:700; color:var(--gold-pale);
-  margin-top:-5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+#scr-mahjong .mj-round-row{
+  flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+  margin-top:-5px; padding:0 2px;
 }
+#scr-mahjong .mj-roundline{
+  min-width:0; text-align:center;
+  font-size:14px; font-weight:700; color:var(--gold-pale);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* One slim action row at the bottom of the mahjong screen:
+   New match (gold primary) · How to play · Hint, side by side. */
+#scr-mahjong .mj-bottom-bar{
+  flex:0 0 auto; display:flex; gap:6px;
+  background:var(--mj-panel); border:1px solid var(--mj-line);
+  border-radius:12px; padding:5px;
+}
+#scr-mahjong .mj-bottom-btn{
+  flex:1 1 0; min-width:0; min-height:46px; padding:8px 4px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:9px; border:2px solid var(--mj-line);
+  background:var(--mj-panel); color:var(--mj-ink);
+  font-size:16px; font-weight:800; line-height:1.15;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  cursor:pointer; box-shadow:0 2px 0 rgba(0,0,0,.18);
+}
+#scr-mahjong .mj-bottom-btn:active{transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.18)}
+#scr-mahjong .mj-bottom-btn.active{border-color:var(--mj-gold); background:var(--mj-panel2); box-shadow:inset 0 0 0 1px var(--mj-gold)}
+#scr-mahjong .mj-bottom-btn.is-primary{
+  background:linear-gradient(180deg,#e9b64a,#c9962e 60%,#b4831f);
+  border-color:#ffe9a8; color:#5d0808;
+  box-shadow:0 3px 0 #6e4d08, 0 5px 10px rgba(0,0,0,.3);
+}
+#scr-mahjong .mj-bottom-btn.is-primary:active{transform:translateY(2px); box-shadow:0 1px 0 #6e4d08}
 #scr-mahjong .mj-main{
   flex:1 1 auto; min-height:0;
   display:grid; grid-template-columns:minmax(0,1fr) 300px;
   gap:12px; align-items:stretch;
   overflow-y:auto;
 }
-#scr-mahjong .table{
+/* The wrap carries the felt + wood table look and stacks two zones:
+   the opponents/center area (flexible — it shrinks and scrolls
+   internally when space is tight) and the player's own zone
+   (seat-you: fixed, reserved, never squeezed or pushed off screen,
+   so the hand is always fully visible above the button row). */
+#scr-mahjong .mj-table-wrap{
   background:radial-gradient(ellipse at 50% 38%, var(--felt1), var(--felt2) 78%);
   border:8px solid var(--wood);
   border-radius:20px;
-  padding:12px;
-  display:grid; gap:10px;
-  grid-template-columns:230px minmax(0,1fr) 230px;
-  grid-template-areas:". top ." "left center right" "you you you";
   box-shadow:0 10px 28px rgba(0,0,0,0.35);
   color:var(--seat-ink);
-  min-height:0;
+  display:flex; flex-direction:column; gap:10px;
+  padding:12px;
+  min-height:0; min-width:0;
+  overflow:hidden;
+}
+#scr-mahjong .table{
+  flex:1 1 auto; min-height:0; min-width:0;
+  overflow-y:auto; overflow-x:hidden;
+  display:grid; gap:10px;
+  grid-template-columns:230px minmax(0,1fr) 230px;
+  grid-template-areas:". top ." "left center right";
+  align-content:start;
+  color:var(--seat-ink);
 }
 #scr-mahjong .seat{
   background:var(--seat-bg); border-radius:12px; padding:9px 11px;
@@ -448,7 +489,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 #scr-mahjong .seat-top{grid-area:top}
 #scr-mahjong .seat-left{grid-area:left}
 #scr-mahjong .seat-right{grid-area:right}
-#scr-mahjong .seat-you{grid-area:you; background:rgba(0,0,0,0.30); display:flex; flex-direction:column; justify-content:flex-start}
+#scr-mahjong .seat-you{flex:0 0 auto; background:rgba(0,0,0,0.30); display:flex; flex-direction:column; justify-content:flex-start}
 #scr-mahjong .seat-you > *{flex:0 0 auto}
 #scr-mahjong .seat-head{display:flex; align-items:center; gap:8px; margin-bottom:7px; flex-wrap:wrap}
 #scr-mahjong .avatar{
@@ -471,7 +512,11 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 #scr-mahjong .meld{display:flex; align-items:center; gap:1px; background:rgba(255,255,255,0.08); border-radius:6px; padding:4px 5px}
 #scr-mahjong .meld .meld-label{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#ffd968; margin-left:5px}
 #scr-mahjong .pool-label{font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:rgba(255,255,255,0.78); margin:5px 0 4px}
-#scr-mahjong .pool{display:flex; flex-wrap:wrap; gap:3px; min-height:34px; align-content:flex-start}
+#scr-mahjong .pool{display:flex; flex-wrap:nowrap; gap:3px; height:44px; min-height:44px; max-width:100%; overflow-x:auto; overflow-y:hidden; align-items:flex-start; align-content:flex-start; padding-bottom:2px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.35) transparent; -webkit-overflow-scrolling:touch}
+#scr-mahjong .pool::-webkit-scrollbar{height:4px}
+#scr-mahjong .pool::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35); border-radius:999px}
+#scr-mahjong .pool::-webkit-scrollbar-track{background:transparent}
+#scr-mahjong .pool .tile{flex:0 0 auto}
 #scr-mahjong .pool .tile.last{outline:2px solid var(--mj-gold); outline-offset:0; animation:mjPulse 1s ease-in-out infinite}
 @keyframes mjPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,217,104,0)} 50%{box-shadow:0 0 10px 3px rgba(255,217,104,0.75)}}
 
@@ -616,28 +661,13 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 
 /* ---------- tablet & phone: one screen, no scrolling ---------- */
 @media (max-width:1020px){
-  #scr-mahjong .mj-main{grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto}
+  #scr-mahjong{gap:8px}
+  #scr-mahjong .mj-main{grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto; gap:8px}
   #scr-mahjong .side{overflow:visible; position:relative}
-  #scr-mahjong .mj-tools{display:none}
-  #scr-mahjong .info-bar{
-    display:flex; flex-direction:column; gap:6px;
-    background:var(--mj-panel); border:1px solid var(--mj-line);
-    border-radius:12px; padding:6px;
-  }
-  #scr-mahjong .info-tabs{display:grid; grid-template-columns:1.15fr 1.25fr 1fr; gap:6px}
-  #scr-mahjong .info-actions{display:grid; grid-template-columns:1fr 1fr; gap:6px}
-  #scr-mahjong .info-tab{
-    min-height:46px; padding:7px 3px; font-size:15px; line-height:1.2;
-    display:flex; align-items:center; justify-content:center; gap:4px;
-    border-radius:8px; white-space:nowrap; overflow:hidden;
-    background:var(--mj-panel); border:2px solid var(--mj-line);
-    color:var(--mj-ink); font-weight:700; cursor:pointer;
-  }
-  #scr-mahjong .info-tab.active{border-color:var(--mj-gold); background:var(--mj-panel2); box-shadow:inset 0 0 0 1px var(--mj-gold)}
-  #scr-mahjong .info-tab-score{color:var(--mj-accent); font-weight:800; font-variant-numeric:tabular-nums}
+  #scr-mahjong .mj-bottom-btn{min-height:44px; font-size:15px}
   #scr-mahjong .side-panel{display:none}
   #scr-mahjong .side-panel.open{
-    display:block; position:fixed; left:10px; right:10px; bottom:132px; z-index:55;
+    display:block; position:fixed; left:10px; right:10px; bottom:84px; z-index:55;
     max-height:48dvh; overflow-y:auto;
     box-shadow:0 14px 40px rgba(0,0,0,.5);
   }
@@ -645,11 +675,13 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 }
 @media (max-width:760px){
   #scr-mahjong{font-size:17px}
+  #scr-mahjong .mj-table-wrap{border-width:5px; padding:6px; gap:6px; border-radius:14px}
   #scr-mahjong .table{
     grid-template-columns:repeat(3, minmax(0,1fr));
-    grid-template-areas:"left top right" "center center center" "you you you";
-    border-width:5px; padding:7px; gap:7px; border-radius:14px;
+    grid-template-areas:"left top right" "center center center";
+    gap:6px;
   }
+  #scr-mahjong .mj-roundline{font-size:13px}
   #scr-mahjong .seat{padding:6px; border-radius:10px}
   #scr-mahjong .seat-head{gap:4px; margin-bottom:4px}
   #scr-mahjong .avatar{width:26px; height:26px; font-size:13px}
@@ -659,15 +691,15 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
   #scr-mahjong .seat-score{font-size:12px}
   #scr-mahjong .backs{display:none}
   #scr-mahjong .pool-label{font-size:10px; margin:3px 0 2px}
-  #scr-mahjong .pool{min-height:0; gap:2px}
+  #scr-mahjong .pool{height:32px; min-height:32px; gap:2px}
   #scr-mahjong .tile.t-mini{--w:18px}
   #scr-mahjong .tile.t-small{--w:29px}
   #scr-mahjong .melds{gap:4px; margin-top:4px}
   #scr-mahjong .meld{padding:2px 3px}
   #scr-mahjong .meld .meld-label{display:none}
-  #scr-mahjong .center{flex-direction:row; flex-wrap:wrap; justify-content:center; align-items:center; gap:3px 10px; padding:2px}
-  #scr-mahjong .compass{width:50px; height:50px; border-width:2px}
-  #scr-mahjong .compass .big-wind{font-size:21px}
+  #scr-mahjong .center{flex-direction:row; flex-wrap:wrap; justify-content:center; align-items:center; gap:2px 8px; padding:1px 2px}
+  #scr-mahjong .compass{width:44px; height:44px; border-width:2px}
+  #scr-mahjong .compass .big-wind{font-size:19px}
   #scr-mahjong .compass .small{font-size:8px}
   #scr-mahjong .center .wall-count{font-size:14px}
   #scr-mahjong .center .turn-line{font-size:14px; width:100%}
@@ -676,14 +708,14 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
   #scr-mahjong .seat-you{padding:7px}
   #scr-mahjong .you-top{flex-direction:row; gap:8px}
   #scr-mahjong .you-discards{flex:1 1 auto}
-  #scr-mahjong .you-discards .tile.t-mini{--w:22px}
+  #scr-mahjong .you-discards .tile.t-mini{--w:20px}
   #scr-mahjong .you-melds .tile.t-mini{--w:19px}
-  #scr-mahjong .status-line{font-size:18px; min-height:0; margin:5px 2px 1px; line-height:1.3}
+  #scr-mahjong .status-line{font-size:18px; min-height:0; margin:3px 2px 0; line-height:1.3}
   #scr-mahjong .status-line .sub{font-size:13px}
   #scr-mahjong .tile.t-hand{--w:clamp(34px, min(11.4vw, 5.8dvh), 48px)}
-  #scr-mahjong .hand{gap:4px; padding:7px 2px 4px; margin-top:5px}
+  #scr-mahjong .hand{gap:4px; padding:6px 2px 4px; margin-top:4px}
   #scr-mahjong .hand .tile.drawn{margin-left:8px}
-  #scr-mahjong .tap-hint{font-size:13px; margin-top:3px}
+  #scr-mahjong .tap-hint{font-size:13px; margin-top:2px}
   #scr-mahjong .action-bar{padding:11px}
   #scr-mahjong .action-bar.show{position:fixed; left:8px; right:8px; bottom:8px; z-index:58; margin:0; max-width:none; background:rgba(10,18,12,0.97); box-shadow:0 10px 30px rgba(0,0,0,0.45)}
   #scr-mahjong .action-bar .prompt{font-size:17px}
@@ -691,11 +723,21 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
   #scr-mahjong .modal{padding:20px 16px}
   #scr-mahjong .modal .win-hand .tile{--w:34px}
 }
-@media (max-width:760px) and (max-height:700px){
-  #scr-mahjong .compass{width:44px; height:44px}
-  #scr-mahjong .compass .big-wind{font-size:18px}
-  #scr-mahjong .tile.t-hand{--w:clamp(32px, min(11.4vw, 5.8dvh), 42px)}
+@media (max-width:760px) and (max-height:760px){
+  /* Short phone viewports (e.g. Safari with its toolbar showing, ~700px
+     of visible page): slim everything around the hand a little more so
+     both tile rows stay fully on screen. */
+  #scr-mahjong .compass{width:40px; height:40px}
+  #scr-mahjong .compass .big-wind{font-size:17px}
+  #scr-mahjong .tile.t-hand{--w:clamp(32px, min(11.4vw, 5.4dvh), 42px)}
   #scr-mahjong .status-line{font-size:16px}
+  #scr-mahjong .mj-bottom-btn{min-height:42px; padding:6px 3px}
+  #scr-mahjong .seat{padding:5px 6px}
+  #scr-mahjong .seat-you{padding:5px 7px}
+  #scr-mahjong .tap-hint{font-size:12px}
+  #scr-mahjong .center .turn-line{font-size:13px}
+  #scr-mahjong .you-discards .tile.t-mini{--w:18px}
+  #scr-mahjong .pool{height:28px; min-height:28px}
 }
 @media (min-width:761px) and (max-width:1020px){
   #scr-mahjong .tile.t-hand{--w:clamp(46px, 7.2vw, 58px)}
@@ -705,13 +747,14 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
   #scr-mahjong .tile.t-hand{--w:clamp(40px, 5.5vw, 50px)}
   #scr-mahjong .tile.t-back-mini{--w:18px}
   #scr-mahjong .backs{min-height:22px; margin-bottom:5px}
-  #scr-mahjong .table{gap:8px; padding:10px}
+  #scr-mahjong .mj-table-wrap{gap:8px; padding:10px}
+  #scr-mahjong .table{gap:8px}
   #scr-mahjong .seat{padding:7px 10px}
   #scr-mahjong .compass{width:76px; height:76px}
   #scr-mahjong .compass .big-wind{font-size:31px}
   #scr-mahjong .status-line{font-size:20px; margin:6px 4px 0; min-height:28px}
   #scr-mahjong .hand{padding:8px 4px 5px}
-  #scr-mahjong .pool{min-height:28px}
+  #scr-mahjong .pool{height:44px; min-height:44px}
 }
 @media (prefers-reduced-motion: reduce){
   #scr-mahjong .pool .tile.last{animation:none}
@@ -1328,9 +1371,12 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
     <div class="coin-chip"><span class="coin-ic" aria-hidden="true"></span><span class="coin-val">1,000</span></div>
     <button class="free-btn" type="button">+ <span data-en="Free Coins" data-zh="免费金币">Free Coins</span></button>
   </div>
-  <div class="mj-roundline" id="mjRoundChip">East round · Hand 1 · Dealer: You</div>
+  <div class="mj-round-row">
+    <div class="mj-roundline" id="mjRoundChip">East round · Hand 1 · Dealer: You</div>
+  </div>
 
   <div class="mj-main">
+   <div class="mj-table-wrap">
     <section class="table" aria-label="Mahjong table">
       <div class="seat seat-top" id="seatTop"></div>
       <div class="seat seat-left" id="seatLeft"></div>
@@ -1348,6 +1394,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
         <div class="turn-line" id="turnLine"></div>
       </div>
       <div class="seat seat-right" id="seatRight"></div>
+    </section>
 
       <div class="seat seat-you" id="seatYou">
         <div class="you-top">
@@ -1365,24 +1412,9 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
         <div class="hand" id="youHand"></div>
         <div class="tap-hint" data-mj="tapHint">Tap a tile above to discard it — there's no hurry</div>
       </div>
-    </section>
+   </div>
 
     <aside class="side">
-      <div class="mj-tools">
-        <button type="button" class="alt-btn" id="btnHint">Hint</button>
-        <button type="button" class="alt-btn" id="btnNewMatch">New match</button>
-      </div>
-      <nav class="info-bar" aria-label="Game information">
-        <div class="info-tabs">
-          <button type="button" class="info-tab" data-info-tab="scores" aria-expanded="false"><span data-mj="scores">Scores</span> <span class="info-tab-score" id="infoScoreMeta">1000</span></button>
-          <button type="button" class="info-tab" data-info-tab="how" aria-expanded="false"><span data-mj="howTo">How to play</span></button>
-          <button type="button" class="info-tab" data-info-tab="log" aria-expanded="false"><span data-mj="gameLog">Game log</span></button>
-        </div>
-        <div class="info-actions">
-          <button type="button" class="info-tab" id="tabHint"><span data-mj="hint">Hint</span></button>
-          <button type="button" class="info-tab" id="tabNew"><span data-mj="newMatch">New match</span></button>
-        </div>
-      </nav>
       <div class="mj-card side-panel" id="panelScores">
         <h2 data-mj="scores">Scores</h2>
         <table class="score-table" id="scoreTable"></table>
@@ -1409,6 +1441,12 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
       </div>
     </aside>
   </div>
+
+  <nav class="mj-bottom-bar" aria-label="Mahjong actions">
+    <button type="button" class="mj-bottom-btn is-primary" id="btnNewMatch"><span data-mj="newMatch">New match</span></button>
+    <button type="button" class="mj-bottom-btn" data-info-tab="how" aria-expanded="false"><span data-mj="howTo">How to play</span></button>
+    <button type="button" class="mj-bottom-btn" id="btnHintBottom"><span data-mj="hint">Hint</span></button>
+  </nav>
 
   <div class="overlay" id="winOverlay">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="winTitle">
@@ -2691,13 +2729,17 @@ function renderSeat(el, idx){
   poolLabel.textContent = tt("discardsLabel");
   el.appendChild(poolLabel);
   var pool = document.createElement("div");
-  pool.className = "pool";
-  pl.discards.forEach(function(tl){
+  pool.className = "pool pool-opp";
+  pool.setAttribute("aria-label", pname(idx) + " discards");
+  /* Single fixed-height scrolling row, newest first (leftmost) so the
+     latest discard is always visible and the panel never grows. */
+  pl.discards.slice().reverse().forEach(function(tl){
     var el2 = tileEl(tl, "t-mini");
     if (S.lastDiscard && S.lastDiscard.tile.uid === tl.uid) el2.classList.add("last");
     pool.appendChild(el2);
   });
   el.appendChild(pool);
+  pool.scrollLeft = 0;
   if (pl.melds.length){
     var melds = document.createElement("div");
     melds.className = "melds";
@@ -2712,11 +2754,14 @@ function renderAll(){
   renderSeat(document.getElementById("seatRight"), 1);
   var pool = document.getElementById("youPool");
   pool.innerHTML = "";
-  S.players[0].discards.forEach(function(tl){
+  /* Your discards: single scrolling row, newest first (leftmost) so the
+     latest discard is always visible without scrolling. */
+  S.players[0].discards.slice().reverse().forEach(function(tl){
     var el = tileEl(tl, "t-mini");
     if (S.lastDiscard && S.lastDiscard.tile.uid === tl.uid) el.classList.add("last");
     pool.appendChild(el);
   });
+  pool.scrollLeft = 0;
   var ym = document.getElementById("youMelds");
   ym.innerHTML = "";
   if (S.players[0].melds.length){
@@ -2789,7 +2834,6 @@ function mjNewMatch(){
   newMatch();
 }
 document.getElementById("btnNewMatch").addEventListener("click", mjNewMatch);
-document.getElementById("tabNew").addEventListener("click", mjNewMatch);
 document.getElementById("btnNextHand").addEventListener("click", function(){
   document.getElementById("winOverlay").classList.remove("show");
   sfx("click");
@@ -2815,8 +2859,7 @@ function mjHint(){
             L("It's your least connected tile — no pair, and no nearby tiles to build a run with.",
               "这张牌和别的牌关系最少 — 没有对子，旁边也没有能凑顺子的牌。"));
 }
-document.getElementById("btnHint").addEventListener("click", mjHint);
-document.getElementById("tabHint").addEventListener("click", mjHint);
+document.getElementById("btnHintBottom").addEventListener("click", mjHint);
 
 /* ================= language (driven by the shared toggle) ================= */
 var EN_HOWTO = document.querySelector("[data-mjhtml='howToBody']").innerHTML;
@@ -2826,8 +2869,6 @@ function mjApplyLanguage(){
   });
   document.querySelector("[data-mjhtml='howToBody']").innerHTML =
     isZh() ? MJ_I18N.zh.howToBody : EN_HOWTO;
-  document.getElementById("btnHint").textContent = tt("hint");
-  document.getElementById("btnNewMatch").textContent = tt("newMatch");
   document.getElementById("lastDiscardLabel").textContent = tt("lastDiscard");
   document.getElementById("btnNextHand").textContent = tt("dealNext");
   if (S){
@@ -2839,7 +2880,7 @@ document.addEventListener("langchange", mjApplyLanguage);
 
 /* compact info tabs (phone/tablet portrait) */
 (function(){
-  var panelFor = { scores: "panelScores", how: "panelHow", log: "panelLog" };
+  var panelFor = { how: "panelHow" };
   var tabs = Array.prototype.slice.call(document.querySelectorAll("#scr-mahjong [data-info-tab]"));
   function closeAll(){
     Object.keys(panelFor).forEach(function(key){
@@ -4121,9 +4162,15 @@ function l4PrizeFor(pick, draw){
   return { tier: null, amount: 0, pos: pos };
 }
 
-/* quietly generous draw, like the other games: most draws are pure
-   chance, but a good share are nudged toward his number, and three
-   losses in a row guarantee the next draw wins something. */
+/* mostly honest draw: nearly every draw is pure chance, a whisper
+   of draws are nudged toward his number (an exact match stays
+   rare — the jackpot), and ten losses in a row guarantee the next
+   draw wins something. Pure chance alone already pays on ~5% of
+   draws (two digits landing in place), and the guarantee converts
+   long dry spells into wins often enough that the nudge is kept
+   near zero: measured over millions of simulated draws, about
+   12% of draws — roughly 1 in 8 or 9 — win a prize, the floor set
+   by pure chance plus the ten-loss guarantee. */
 function l4RandomDigits(){
   return [0, 0, 0, 0].map(function(){ return Math.floor(Math.random() * 10); });
 }
@@ -4164,13 +4211,23 @@ function l4Construct(kind){
 }
 function l4MakeDraw(){
   var kind = null, r = Math.random();
-  if (l4LoseStreak >= 3){
+  if (l4LoseStreak >= 10){
     var g = Math.random();
     kind = g < 0.5 ? "two" : g < 0.82 ? "three" : "any";
-  } else if (r < 0.05) kind = "exact";
-  else if (r < 0.13) kind = "any";
-  else if (r < 0.28) kind = "three";
-  else if (r < 0.43) kind = "two";
+    /* the guarantee must hold for every pick: if the chosen tier
+       can't be built for his digits (e.g. "any order" for 5555),
+       fall through the other tiers before giving up. */
+    var order = [kind, "two", "three", "any"];
+    for (var oi = 0; oi < order.length; oi++){
+      var gc = l4Construct(order[oi]);
+      if (gc) return gc;
+    }
+    return l4RandomDigits();
+  }
+  if (r < 0.001) kind = "exact";
+  else if (r < 0.0012) kind = "any";
+  else if (r < 0.0015) kind = "three";
+  else if (r < 0.002) kind = "two";
   if (kind){
     var c = l4Construct(kind);
     if (c) return c;
