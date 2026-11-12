@@ -1066,6 +1066,140 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 }
 </style>
 
+<style>
+/* ============================================================
+   LUCKY 4D — Magnum-style 4-digit lottery draw.
+   Ivory ticket card on the shared red felt: winning balls and
+   your picks share one 4-column grid so they compare at a glance.
+   ============================================================ */
+#scr-lucky4d .l4-body{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:8px}
+#scr-lucky4d .l4-ticket{
+  background:linear-gradient(180deg, #fffef9 0%, var(--cream) 52%, #ffedb4 100%);
+  border:2px solid var(--gold-dark);
+  border-radius:18px;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 6px 0 #5f4206, 0 14px 26px rgba(0,0,0,.35);
+  padding:12px 14px 13px;
+  color:var(--ink);
+  flex:0 0 auto;
+}
+#scr-lucky4d .l4-label-row{display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:30px}
+#scr-lucky4d .l4-label{font-size:16px; font-weight:900; letter-spacing:.06em; color:#7d0f0f; text-transform:uppercase}
+#scr-lucky4d .l4-drawno{font-size:15px; font-weight:800; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+#scr-lucky4d .l4-grid{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-top:7px}
+#scr-lucky4d .l4-divider{border-top:2px dashed rgba(168,123,20,.5); margin:11px 2px 9px}
+#scr-lucky4d .ball{
+  position:relative;
+  width:100%; max-width:78px; aspect-ratio:1; margin:0 auto;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:37px; font-weight:900; line-height:1; color:#5d0808;
+  font-variant-numeric:tabular-nums;
+  background:radial-gradient(circle at 35% 30%, #fff6d8, var(--gold) 55%, var(--gold-dark));
+  border:3px solid #fff3c4;
+  box-shadow:0 4px 10px rgba(60,20,0,.35), inset 0 -5px 10px rgba(122,74,0,.35);
+}
+#scr-lucky4d .ball.empty{
+  background:radial-gradient(circle at 35% 30%, #c22323, var(--red-bright) 55%, #7d0f0f);
+  color:var(--gold-pale);
+  border-color:var(--gold);
+  font-size:30px;
+}
+#scr-lucky4d .ball.tumbling{animation:l4Tumble .13s linear infinite}
+@keyframes l4Tumble{0%{transform:translateY(0) rotate(-9deg)} 50%{transform:translateY(-8px) rotate(8deg)} 100%{transform:translateY(0) rotate(-9deg)}}
+#scr-lucky4d .ball.landed{animation:l4Pop .38s ease-out}
+@keyframes l4Pop{0%{transform:scale(.55)} 60%{transform:scale(1.16)} 100%{transform:scale(1)}}
+#scr-lucky4d .ball.match{box-shadow:0 0 0 4px #2fa84f, 0 0 20px rgba(47,168,79,.75), inset 0 -5px 10px rgba(122,74,0,.35)}
+#scr-lucky4d .ball.match::after{
+  content:"✓"; position:absolute; top:-7px; right:-7px;
+  width:25px; height:25px; border-radius:50%;
+  background:#2fa84f; color:#fff; border:2px solid #fff;
+  font-size:15px; font-weight:900; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+}
+#scr-lucky4d .pick-box{
+  height:62px; width:100%;
+  border-radius:14px; border:3px solid var(--gold-dark);
+  background:#fffdf6; color:#7d0f0f;
+  display:flex; align-items:center; justify-content:center;
+  font-size:38px; font-weight:900; line-height:1;
+  font-variant-numeric:tabular-nums;
+  cursor:pointer; padding:0;
+  box-shadow:0 3px 0 rgba(0,0,0,.18);
+}
+#scr-lucky4d .pick-box.sel{border-color:#c0272d; background:#fff3c4; box-shadow:0 0 0 3px rgba(233,188,74,.95), 0 3px 0 rgba(0,0,0,.18)}
+#scr-lucky4d .pick-box.match{border-color:#2fa84f; background:#e2f6e6}
+#scr-lucky4d .pick-box:disabled{opacity:.55; cursor:default}
+#scr-lucky4d .l4-quick{min-height:44px; padding:6px 15px; font-size:16px}
+#scr-lucky4d .l4-message{
+  flex:0 0 auto; min-height:28px;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  font-size:21px; font-weight:800; line-height:1.25; color:var(--cream);
+}
+#scr-lucky4d .l4-message.win{color:var(--gold-light)}
+#scr-lucky4d .l4-keys{display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; flex:0 0 auto}
+#scr-lucky4d .key{
+  min-height:54px; padding:4px 0;
+  font-size:26px; font-weight:900; line-height:1;
+  font-variant-numeric:tabular-nums;
+  border-radius:12px; border:2px solid var(--gold-dark);
+  background:linear-gradient(180deg,#fffdf4,var(--cream) 60%,#ffe9b0);
+  color:#7a0f0f; cursor:pointer;
+  box-shadow:0 3px 0 rgba(0,0,0,.28);
+}
+#scr-lucky4d .key:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.28)}
+#scr-lucky4d .key:disabled{opacity:.5}
+#scr-lucky4d #l4DrawBtn{flex:0 0 auto}
+#scr-lucky4d .l4-prizes{
+  flex:0 0 auto;
+  background:rgba(0,0,0,.16);
+  border:2px solid rgba(232,182,76,.55);
+  border-radius:14px;
+  padding:8px 13px 9px;
+}
+#scr-lucky4d .l4-prize-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  font-size:16px; font-weight:900; letter-spacing:.05em; color:var(--gold-light); text-transform:uppercase;
+  margin-bottom:5px;
+}
+#scr-lucky4d .l4-ticket-cost{font-size:14.5px; font-weight:800; letter-spacing:0; text-transform:none; color:var(--gold-pale)}
+#scr-lucky4d .l4-prize-grid{display:grid; grid-template-columns:1fr 1fr; gap:3px 16px}
+#scr-lucky4d .l4-prize{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:15.5px; font-weight:600; color:var(--cream); white-space:nowrap}
+#scr-lucky4d .l4-prize b{color:var(--gold); font-weight:900; font-variant-numeric:tabular-nums}
+#scr-lucky4d .l4-prize.won{color:#8ff0a4}
+#scr-lucky4d .l4-prize.won b{color:#8ff0a4}
+@media (max-height:740px){
+  #scr-lucky4d .ball{font-size:32px; max-width:66px}
+  #scr-lucky4d .ball.empty{font-size:26px}
+  #scr-lucky4d .pick-box{height:54px; font-size:33px}
+  #scr-lucky4d .key{min-height:47px; font-size:23px}
+  #scr-lucky4d #l4DrawBtn{min-height:64px; font-size:26px}
+  #scr-lucky4d .l4-message{font-size:19px; min-height:25px}
+  #scr-lucky4d .l4-ticket{padding:10px 12px 11px}
+}
+@media (max-height:620px){
+  #scr-lucky4d .ball{font-size:27px; max-width:56px}
+  #scr-lucky4d .ball.empty{font-size:22px}
+  #scr-lucky4d .pick-box{height:46px; font-size:28px; border-radius:11px}
+  #scr-lucky4d .key{min-height:40px; font-size:21px}
+  #scr-lucky4d #l4DrawBtn{min-height:56px; font-size:23px}
+  #scr-lucky4d .l4-label{font-size:14px}
+  #scr-lucky4d .l4-prize{font-size:14px}
+  #scr-lucky4d .l4-message{font-size:17px; min-height:22px}
+}
+/* hub: four cards share the same fixed screen — tighten the gaps */
+@media (max-height:700px){
+  #scr-home .cards{gap:9px}
+}
+@media (max-height:600px){
+  #scr-home .cards{gap:7px}
+}
+@media (prefers-reduced-motion: reduce){
+  #scr-lucky4d .ball.tumbling{animation:none}
+  #scr-lucky4d .ball.landed{animation:none}
+}
+</style>
+
 <!-- ==================== HOME HUB ==================== -->
 <section class="screen active" id="scr-home">
   <header class="app-header">
@@ -1148,6 +1282,27 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
       <div class="card-text">
         <div class="game-name" data-en="Sic Bo Dice" data-zh="骰子游戏">Sic Bo Dice</div>
         <div class="game-desc" data-en="Three dice, big and small" data-zh="三个骰子，猜大猜小">Three dice, big and small</div>
+      </div>
+      <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
+    </a>
+
+    <a class="gcard" href="#" data-goto="lucky4d">
+      <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+      <div class="medallion"><div class="icon" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="img">
+          <circle cx="33" cy="34" r="17" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
+          <text x="33" y="42" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">8</text>
+          <circle cx="64" cy="27" r="14" fill="#f9dd8a" stroke="#b8860b" stroke-width="3"/>
+          <text x="64" y="34" text-anchor="middle" font-size="16" font-weight="900" fill="#7d0f0f">6</text>
+          <circle cx="61" cy="56" r="15" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
+          <text x="61" y="63" text-anchor="middle" font-size="17" font-weight="900" fill="#b91c1c">4</text>
+          <rect x="18" y="76" width="64" height="13" rx="5" fill="#7d0f0f" stroke="#e9bc4a" stroke-width="2"/>
+          <text x="50" y="86.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#f9dd8a" font-family="serif">4 D</text>
+        </svg>
+      </div></div>
+      <div class="card-text">
+        <div class="game-name" data-en="Lucky 4D" data-zh="万能4D">Lucky 4D</div>
+        <div class="game-desc" data-en="Pick 4 digits, watch the draw" data-zh="选 4 个数字，看开彩">Pick 4 digits, watch the draw</div>
       </div>
       <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
     </a>
@@ -1371,6 +1526,58 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
       <button class="alt-btn clearbtn" id="sbClearBtn" type="button" data-sb="clear">Clear Bets</button>
     </div>
     <button class="primary-btn" id="rollBtn" type="button">🎲 <span data-sb="roll">ROLL</span></button>
+  </div>
+</section>
+
+<!-- ==================== LUCKY 4D ==================== -->
+<section class="screen" id="scr-lucky4d">
+  <header class="app-header">
+    <button class="back-btn" type="button" data-goto="home"><span class="arr">‹</span><span data-en="Games" data-zh="游戏">Games</span></button>
+    <h1 class="app-title" data-en="Lucky 4D" data-zh="万能4D">Lucky 4D</h1>
+    <div class="hdr-controls">
+      <button class="hdr-btn sound-btn" type="button" aria-label="Sound on or off">🔊</button>
+      <button class="hdr-btn lang-btn" type="button" aria-label="Switch language">中文</button>
+    </div>
+  </header>
+
+  <div class="coin-row">
+    <div class="coin-chip"><span class="coin-ic" aria-hidden="true"></span><span class="coin-val">1,000</span></div>
+    <button class="free-btn" type="button">+ <span data-en="Free Coins" data-zh="免费金币">Free Coins</span></button>
+  </div>
+
+  <div class="l4-body">
+    <div class="l4-ticket">
+      <div class="l4-label-row">
+        <span class="l4-label" data-l4="winNumber">Winning number</span>
+        <span class="l4-drawno" id="l4DrawNo">Draw #1</span>
+      </div>
+      <div class="l4-grid" id="l4Balls" aria-label="Winning number"></div>
+      <div class="l4-divider" aria-hidden="true"></div>
+      <div class="l4-label-row">
+        <span class="l4-label" data-l4="yourNumber">Your number</span>
+        <button class="alt-btn l4-quick" id="l4QuickBtn" type="button">🎲 <span data-l4="quickPick">Quick Pick</span></button>
+      </div>
+      <div class="l4-grid" id="l4Picks" aria-label="Your number"></div>
+    </div>
+
+    <div class="l4-message" id="l4Message" role="status" aria-live="polite"></div>
+
+    <div class="l4-keys" id="l4Keys" aria-label="Digit picker"></div>
+
+    <button class="primary-btn" id="l4DrawBtn" type="button">🎉 <span data-l4="draw">DRAW</span></button>
+
+    <div class="l4-prizes">
+      <div class="l4-prize-head">
+        <span data-l4="prizes">Prizes</span>
+        <span class="l4-ticket-cost" data-l4="ticket">Ticket: 10 coins</span>
+      </div>
+      <div class="l4-prize-grid">
+        <div class="l4-prize" id="l4PrizeExact"><span data-l4="pExact">All 4 in order</span><b>2,000</b></div>
+        <div class="l4-prize" id="l4PrizeAny"><span data-l4="pAny">All 4, any order</span><b>400</b></div>
+        <div class="l4-prize" id="l4Prize3"><span data-l4="p3">3 in the right place</span><b>200</b></div>
+        <div class="l4-prize" id="l4Prize2"><span data-l4="p2">2 in the right place</span><b>20</b></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -3797,6 +4004,413 @@ sbBuildBoard();
 sbUpdateBetInfo();
 sbSetOddsLine(null);
 sbSetMessage(sbT("placeBet"), "");
+</script>
+
+<script>
+"use strict";
+/* ================= LUCKY 4D =================
+   Magnum-style 4-digit lottery. Coins, sound and language come
+   from the shared system: window.WALLET, window.SOUND_ON,
+   window.LANG. Play money only — a ticket is 10 coins and the
+   wallet tops itself up, so coins never run dry. */
+var L4_TICKET = 10;
+var L4_PRIZES = { exact: 2000, any: 400, three: 200, two: 20 };
+var L4_STR = {
+  en: {
+    winNumber: "Winning number", yourNumber: "Your number", quickPick: "Quick Pick",
+    draw: "DRAW", drawAgain: "DRAW AGAIN", prizes: "Prizes", ticket: "Ticket: 10 coins",
+    pExact: "All 4 in order", pAny: "All 4, any order", p3: "3 in the right place", p2: "2 in the right place",
+    drawNo: "Draw #{n}",
+    msgStart: "Pick your 4 digits, then tap DRAW!",
+    msgChanged: "New number — tap DRAW!",
+    msgQuick: "Quick Pick chose your number!",
+    msgDrawing: "Drawing… good luck!",
+    msgJackpot: "🎉 JACKPOT! All 4 in order! You win {n} coins!",
+    msgWin: "🎉 You win {n} coins!",
+    msgClose: "So close — {n} in the right place! Try again!",
+    msgLose: "No win this time — try again!",
+    toppedUp: "Free coins added — you now have 1,000!"
+  },
+  zh: {
+    winNumber: "开彩号码", yourNumber: "你的号码", quickPick: "快速选号",
+    draw: "开彩", drawAgain: "再开一次", prizes: "奖金", ticket: "每票 10 金币",
+    pExact: "四个全中 · 顺序对", pAny: "四个全中 · 顺序不限", p3: "3 个位置对", p2: "2 个位置对",
+    drawNo: "第 {n} 期",
+    msgStart: "选好 4 个数字，点“开彩”！",
+    msgChanged: "新号码 — 点“开彩”！",
+    msgQuick: "快速选号帮您选好了！",
+    msgDrawing: "开彩中…祝您好运！",
+    msgJackpot: "🎉 头奖！四个全中！您赢了 {n} 金币！",
+    msgWin: "🎉 您赢了 {n} 金币！",
+    msgClose: "差一点 — {n} 个位置对了！再来一次！",
+    msgLose: "这次没中 — 再来一次！",
+    toppedUp: "已送您免费金币，现在有 1,000！"
+  }
+};
+function l4T(k){ return L4_STR[window.LANG][k]; }
+function l4Fill(str, map){ return str.replace(/\{(\w+)\}/g, function(_, k){ return map[k]; }); }
+function l4El(id){ return document.getElementById(id); }
+
+var l4Pick = [0, 0, 0, 0];
+var l4Sel = 0;
+var l4Drawn = null;        /* winning digits after a draw, else null */
+var l4Drawing = false;
+var l4DrawCount = 0;
+var l4LoseStreak = 0;
+var l4WonTier = null;      /* tier key of the last win, for the prize list */
+var l4Msg = { kind: "start" };
+var l4BallEls = [], l4PickEls = [], l4KeyEls = [];
+var l4Timers = [];
+
+/* ================= audio: soft pops + win chime (synthesized) ================= */
+var l4Actx = null;
+function l4Audio(){
+  if (!l4Actx){
+    try { l4Actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { l4Actx = null; }
+  }
+  if (l4Actx && l4Actx.state === "suspended") l4Actx.resume();
+  return l4Actx;
+}
+function l4Tone(when, freq, dur, gain){
+  if (!l4Actx || !window.SOUND_ON) return;
+  var o = l4Actx.createOscillator(), g = l4Actx.createGain();
+  o.type = "triangle"; o.frequency.value = freq;
+  g.gain.setValueAtTime(0, when);
+  g.gain.linearRampToValueAtTime(gain || 0.2, when + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+  o.connect(g); g.connect(l4Actx.destination);
+  o.start(when); o.stop(when + dur + 0.05);
+}
+function l4Pop(idx){
+  if (!window.SOUND_ON) return;
+  var ac = l4Audio(); if (!ac) return;
+  l4Tone(ac.currentTime, 420 + idx * 110, 0.14, 0.22);
+}
+function l4ClickSound(){
+  if (!window.SOUND_ON) return;
+  var ac = l4Audio(); if (!ac) return;
+  l4Tone(ac.currentTime, 660, 0.07, 0.1);
+}
+function l4WinSound(big){
+  if (!window.SOUND_ON) return;
+  var ac = l4Audio(); if (!ac) return;
+  var now = ac.currentTime;
+  var notes = big ? [523, 659, 784, 1047, 784, 1047, 1319] : [523, 659, 784, 1047];
+  for (var i = 0; i < notes.length; i++) l4Tone(now + i * 0.11, notes[i], 0.32, 0.22);
+}
+
+/* ================= prize logic ================= */
+function l4PosMatches(pick, draw){
+  var n = 0;
+  for (var i = 0; i < 4; i++) if (pick[i] === draw[i]) n++;
+  return n;
+}
+function l4SameDigits(a, b){
+  var ca = [0,0,0,0,0,0,0,0,0,0], cb = [0,0,0,0,0,0,0,0,0,0];
+  a.forEach(function(d){ ca[d]++; });
+  b.forEach(function(d){ cb[d]++; });
+  for (var i = 0; i < 10; i++) if (ca[i] !== cb[i]) return false;
+  return true;
+}
+function l4PrizeFor(pick, draw){
+  var pos = l4PosMatches(pick, draw);
+  if (pos === 4) return { tier: "exact", amount: L4_PRIZES.exact, pos: pos };
+  if (l4SameDigits(pick, draw)) return { tier: "any", amount: L4_PRIZES.any, pos: pos };
+  if (pos === 3) return { tier: "three", amount: L4_PRIZES.three, pos: pos };
+  if (pos === 2) return { tier: "two", amount: L4_PRIZES.two, pos: pos };
+  return { tier: null, amount: 0, pos: pos };
+}
+
+/* quietly generous draw, like the other games: most draws are pure
+   chance, but a good share are nudged toward his number, and three
+   losses in a row guarantee the next draw wins something. */
+function l4RandomDigits(){
+  return [0, 0, 0, 0].map(function(){ return Math.floor(Math.random() * 10); });
+}
+function l4ChangedDigit(d){ return (d + 1 + Math.floor(Math.random() * 9)) % 10; }
+function l4Construct(kind){
+  var i, cand;
+  if (kind === "exact") return l4Pick.slice();
+  if (kind === "any"){
+    for (i = 0; i < 40; i++){
+      cand = l4Pick.slice();
+      for (var j = cand.length - 1; j > 0; j--){
+        var k = Math.floor(Math.random() * (j + 1));
+        var tmp = cand[j]; cand[j] = cand[k]; cand[k] = tmp;
+      }
+      if (l4PrizeFor(l4Pick, cand).tier === "any") return cand;
+    }
+    return null;
+  }
+  if (kind === "three"){
+    cand = l4Pick.slice();
+    var p = Math.floor(Math.random() * 4);
+    cand[p] = l4ChangedDigit(cand[p]);
+    return l4PrizeFor(l4Pick, cand).tier === "three" ? cand : null;
+  }
+  if (kind === "two"){
+    for (i = 0; i < 60; i++){
+      cand = l4Pick.slice();
+      var pos = [0, 1, 2, 3];
+      var a = pos.splice(Math.floor(Math.random() * 4), 1)[0];
+      var b = pos.splice(Math.floor(Math.random() * 3), 1)[0];
+      cand[a] = l4ChangedDigit(cand[a]);
+      cand[b] = l4ChangedDigit(cand[b]);
+      if (l4PrizeFor(l4Pick, cand).tier === "two") return cand;
+    }
+    return null;
+  }
+  return null;
+}
+function l4MakeDraw(){
+  var kind = null, r = Math.random();
+  if (l4LoseStreak >= 3){
+    var g = Math.random();
+    kind = g < 0.5 ? "two" : g < 0.82 ? "three" : "any";
+  } else if (r < 0.05) kind = "exact";
+  else if (r < 0.13) kind = "any";
+  else if (r < 0.28) kind = "three";
+  else if (r < 0.43) kind = "two";
+  if (kind){
+    var c = l4Construct(kind);
+    if (c) return c;
+  }
+  return l4RandomDigits();
+}
+
+/* ================= rendering ================= */
+function l4RenderBalls(){
+  l4BallEls.forEach(function(ball, i){
+    if (l4Drawn){
+      ball.textContent = l4Drawn[i];
+      ball.classList.remove("empty");
+      ball.classList.toggle("match", l4Drawn[i] === l4Pick[i]);
+    } else {
+      ball.textContent = "?";
+      ball.classList.add("empty");
+      ball.classList.remove("match", "landed");
+    }
+  });
+}
+function l4RenderPicks(){
+  l4PickEls.forEach(function(box, i){
+    box.textContent = l4Pick[i];
+    box.classList.toggle("sel", i === l4Sel && !l4Drawing);
+    box.classList.toggle("match", !!l4Drawn && l4Drawn[i] === l4Pick[i]);
+    box.disabled = l4Drawing;
+  });
+}
+function l4RenderPrizes(){
+  var map = { exact: "l4PrizeExact", any: "l4PrizeAny", three: "l4Prize3", two: "l4Prize2" };
+  for (var k in map) l4El(map[k]).classList.toggle("won", l4WonTier === k);
+}
+function l4RenderMsg(){
+  var m = l4El("l4Message"), txt = "", win = false;
+  switch (l4Msg.kind){
+    case "start":   txt = l4T("msgStart"); break;
+    case "changed": txt = l4T("msgChanged"); break;
+    case "quick":   txt = l4T("msgQuick"); break;
+    case "drawing": txt = l4T("msgDrawing"); break;
+    case "jackpot": txt = l4Fill(l4T("msgJackpot"), { n: fmtCoins(l4Msg.amount) }); win = true; break;
+    case "win":     txt = l4Fill(l4T("msgWin"), { n: fmtCoins(l4Msg.amount) }); win = true; break;
+    case "close":   txt = l4Fill(l4T("msgClose"), { n: l4Msg.pos }); break;
+    case "lose":    txt = l4T("msgLose"); break;
+    case "toppedUp": txt = l4T("toppedUp"); win = true; break;
+  }
+  m.textContent = txt;
+  m.classList.toggle("win", win);
+}
+function l4RenderDrawNo(){
+  l4El("l4DrawNo").textContent = l4Fill(l4T("drawNo"), { n: l4DrawCount + 1 });
+}
+function l4RenderControls(){
+  l4El("l4DrawBtn").disabled = l4Drawing;
+  l4El("l4QuickBtn").disabled = l4Drawing;
+  l4KeyEls.forEach(function(k){ k.disabled = l4Drawing; });
+  l4El("l4DrawBtn").querySelector("[data-l4]").textContent =
+    l4Drawn && !l4Drawing ? l4T("drawAgain") : l4T("draw");
+}
+function l4RenderAll(){
+  l4RenderBalls(); l4RenderPicks(); l4RenderPrizes();
+  l4RenderMsg(); l4RenderDrawNo(); l4RenderControls();
+}
+function l4SetMsg(kind, data){
+  l4Msg = { kind: kind };
+  if (data) for (var k in data) l4Msg[k] = data[k];
+  l4RenderMsg();
+}
+/* editing the number after a draw clears the old draw, so the two
+   rows never show a stale comparison */
+function l4ClearDraw(){
+  if (!l4Drawn) return;
+  l4Drawn = null;
+  l4WonTier = null;
+  l4RenderBalls(); l4RenderPrizes(); l4RenderControls();
+}
+
+/* ================= picking ================= */
+function l4PressDigit(d){
+  if (l4Drawing) return;
+  l4Audio();
+  l4ClearDraw();
+  l4Pick[l4Sel] = d;
+  l4Sel = (l4Sel + 1) % 4;
+  l4ClickSound();
+  buzz(15);
+  l4SetMsg("changed");
+  l4RenderPicks(); l4RenderControls();
+}
+function l4QuickPick(){
+  if (l4Drawing) return;
+  l4Audio();
+  l4ClearDraw();
+  l4Pick = l4RandomDigits();
+  l4Sel = 0;
+  l4ClickSound();
+  buzz(25);
+  l4SetMsg("quick");
+  l4RenderPicks(); l4RenderControls();
+}
+
+/* ================= the draw ================= */
+function l4Later(fn, ms){
+  var id = setTimeout(fn, ms);
+  l4Timers.push(id);
+  return id;
+}
+function l4Draw(){
+  if (l4Drawing) return;
+  l4Audio();
+  if (window.WALLET < L4_TICKET) walletAdd(500);
+  walletSet(window.WALLET - L4_TICKET);
+  l4Drawing = true;
+  l4Drawn = null;
+  l4WonTier = null;
+  l4DrawCount++;
+  var result = l4MakeDraw();
+  l4SetMsg("drawing");
+  l4RenderBalls(); l4RenderPicks(); l4RenderPrizes(); l4RenderDrawNo(); l4RenderControls();
+  buzz(35);
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced){
+    l4Later(function(){
+      l4Drawn = result;
+      l4RenderBalls(); l4RenderPicks();
+      l4Settle(result);
+    }, 400);
+    return;
+  }
+  /* balls tumble out one by one, left to right */
+  result.forEach(function(digit, i){
+    l4Later(function(){
+      var ball = l4BallEls[i];
+      ball.classList.remove("empty");
+      ball.classList.add("tumbling");
+      var spin = setInterval(function(){
+        ball.textContent = Math.floor(Math.random() * 10);
+      }, 70);
+      l4Timers.push(spin);
+      l4Later(function(){
+        clearInterval(spin);
+        ball.classList.remove("tumbling");
+        ball.textContent = digit;
+        ball.classList.add("landed");
+        l4Pop(i);
+        buzz(20);
+        l4Later(function(){ ball.classList.remove("landed"); }, 420);
+        if (i === 3){
+          l4Later(function(){
+            l4Drawn = result;
+            l4RenderBalls(); l4RenderPicks();
+            l4Settle(result);
+          }, 300);
+        }
+      }, 680);
+    }, i * 480);
+  });
+}
+function l4Settle(result){
+  l4Drawing = false;
+  var prize = l4PrizeFor(l4Pick, result);
+  if (prize.amount > 0){
+    l4LoseStreak = 0;
+    l4WonTier = prize.tier;
+    walletAdd(prize.amount);
+    var big = prize.tier === "exact" || prize.tier === "any";
+    l4SetMsg(prize.tier === "exact" ? "jackpot" : "win", { amount: prize.amount });
+    l4WinSound(big);
+    coinFall(prize.tier === "exact" ? 32 : big ? 20 : 12);
+    buzz(big ? [70, 50, 70, 50, 120] : [50, 40, 80]);
+  } else {
+    l4LoseStreak++;
+    if (prize.pos > 0) l4SetMsg("close", { pos: prize.pos });
+    else l4SetMsg("lose");
+  }
+  l4RenderPrizes(); l4RenderControls();
+  if (window.WALLET < L4_TICKET){
+    walletSet(1000);
+    l4Later(function(){ l4SetMsg("toppedUp"); }, 1600);
+  }
+}
+
+/* ================= build & wire ================= */
+(function l4Init(){
+  var ballsWrap = l4El("l4Balls");
+  for (var i = 0; i < 4; i++){
+    var ball = document.createElement("div");
+    ball.className = "ball empty";
+    ball.textContent = "?";
+    ballsWrap.appendChild(ball);
+    l4BallEls.push(ball);
+  }
+  var picksWrap = l4El("l4Picks");
+  for (var p = 0; p < 4; p++){
+    (function(idx){
+      var box = document.createElement("button");
+      box.type = "button";
+      box.className = "pick-box";
+      box.setAttribute("aria-label", "Digit " + (idx + 1));
+      box.addEventListener("click", function(){
+        if (l4Drawing) return;
+        l4Sel = idx;
+        l4ClickSound();
+        l4RenderPicks();
+      });
+      picksWrap.appendChild(box);
+      l4PickEls.push(box);
+    })(p);
+  }
+  var keysWrap = l4El("l4Keys");
+  for (var d = 0; d <= 9; d++){
+    (function(digit){
+      var key = document.createElement("button");
+      key.type = "button";
+      key.className = "key";
+      key.textContent = digit;
+      key.setAttribute("aria-label", "Digit " + digit);
+      key.addEventListener("click", function(){ l4PressDigit(digit); });
+      keysWrap.appendChild(key);
+      l4KeyEls.push(key);
+    })(d);
+  }
+  l4Pick = l4RandomDigits();   /* a number is ready — he can draw right away */
+  l4El("l4QuickBtn").addEventListener("click", l4QuickPick);
+  l4El("l4DrawBtn").addEventListener("click", l4Draw);
+  document.addEventListener("pointerdown", function(){ if (window.SOUND_ON) l4Audio(); }, { passive: true });
+  l4RenderAll();
+})();
+
+function l4ApplyLang(){
+  document.querySelectorAll("#scr-lucky4d [data-l4]").forEach(function(el){
+    var k = el.getAttribute("data-l4");
+    if (k === "draw") return;   /* draw button label is state-driven */
+    if (L4_STR[window.LANG][k]) el.textContent = L4_STR[window.LANG][k];
+  });
+  l4RenderMsg(); l4RenderDrawNo(); l4RenderControls();
+}
+document.addEventListener("langchange", l4ApplyLang);
+l4ApplyLang();
 </script>
 </body>
 </html>
