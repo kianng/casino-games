@@ -1770,24 +1770,65 @@ document.querySelectorAll(".free-btn").forEach(function(b){
 
 /* ---------- persistence ----------
    The shared wallet, the language choice and the sound setting —
-   plus a small slice per game that asks for one (mahjong match,
-   Lucky 4D pick) — are kept in localStorage, so closing the tab or
-   reloading the page never wipes them. A first visit still starts
-   at the defaults: 1,000 coins, English, sound on. */
+   plus what each game asks for (the mahjong match including the
+   in-progress hand, a slots free-spins run, the Lucky 4D pick) —
+   are kept in localStorage, so closing the tab or reloading the
+   page never wipes them. A first visit still starts at the
+   defaults: 1,000 coins, English, sound on. */
 var SAVE_KEY = "dads-casino-save-v1";
 var saveCache = {};
 try {
   var parsedSave = JSON.parse(localStorage.getItem(SAVE_KEY) || "{}");
   if (parsedSave && typeof parsedSave === "object") saveCache = parsedSave;
 } catch (e) { saveCache = {}; }
-window.__RESTORE = saveCache;
+/* __RESTORE is a snapshot of what was actually in storage when the
+   page loaded. saveState() keeps mutating saveCache during the
+   session, so restore decisions must read this copy — never the
+   live object — or this session's own writes (a fresh match dealing
+   its first hand, say) would be mistaken for a previous visit's
+   save and a "welcome back" would appear on a first visit. */
+window.__RESTORE = JSON.parse(JSON.stringify(saveCache));
 function saveState(){
   if (!saveCache) return;
   try {
     saveCache.wallet = window.WALLET;
     saveCache.lang = window.LANG;
     saveCache.sound = window.SOUND_ON;
-    if (typeof G !== "undefined" && G && G.scores) saveCache.mj = { scores: G.scores.slice(), dealer: G.dealer, handNo: G.handNo, roundWind: G.roundWind };
+    if (typeof G !== "undefined" && G && G.scores){
+      var mjSave = { scores: G.scores.slice(), dealer: G.dealer, handNo: G.handNo, roundWind: G.roundWind };
+      /* The whole in-progress hand goes too — wall in order, every
+         seat's hand, discards and melds, whose turn it is — so a
+         reload picks the game up tile-for-tile where it left off.
+         A finished hand (S.over) is not saved: the next visit deals
+         the next hand with the restored scores, as before. Tiles
+         serialize as [uid, type] pairs. */
+      if (typeof S !== "undefined" && S && !S.over && S.players && S.wall){
+        var serT = function(tl){ return [tl.uid, tl.t]; };
+        mjSave.game = {
+          wall: S.wall.map(serT),
+          players: S.players.map(function(pl){
+            return {
+              hand: pl.hand.map(serT),
+              discards: pl.discards.map(serT),
+              melds: pl.melds.map(function(m){
+                return { kind: m.kind, concealed: !!m.concealed, tiles: m.tiles.map(serT) };
+              })
+            };
+          }),
+          current: S.current,
+          phase: S.phase,
+          drawnUid: S.drawnUid,
+          lastDiscard: S.lastDiscard ? { tile: serT(S.lastDiscard.tile), from: S.lastDiscard.from } : null
+        };
+      }
+      saveCache.mj = mjSave;
+    }
+    /* A slots free-spins run survives a reload too: spins still to
+       play, the bet they play at, and what the run has won so far. */
+    if (typeof slState !== "undefined" && slState){
+      if (slState.freeSpins > 0) saveCache.slots = { freeSpins: slState.freeSpins, betIdx: slState.betIdx, freeTotal: slState.freeTotal };
+      else if (saveCache.slots) delete saveCache.slots;
+    }
     if (typeof l4Pick !== "undefined" && l4Pick) saveCache.l4 = { pick: l4Pick.slice(), drawCount: l4DrawCount, loseStreak: l4LoseStreak };
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveCache));
   } catch (e) {}
@@ -2717,6 +2758,9 @@ function declareWin(idx, opts){
     G.handNo++;
     if (G.handNo > 4){ G.handNo = 1; G.roundWind = (G.roundWind + 1) % 4; }
   }
+  /* the deal has passed on — save again so a reload on this overlay
+     restores the advanced dealer, not the one renderAll captured */
+  saveState();
 }
 function endDrawGame(){
   S.over = true;
@@ -2737,6 +2781,7 @@ function endDrawGame(){
   G.dealer = (G.dealer + 1) % 4;
   G.handNo++;
   if (G.handNo > 4){ G.handNo = 1; G.roundWind = (G.roundWind + 1) % 4; }
+  saveState(); /* dealer advanced after renderAll — see declareWin */
 }
 
 /* ================= tile faces ================= */
@@ -3031,9 +3076,106 @@ document.addEventListener("langchange", mjApplyLanguage);
 })();
 
 mjApplyLanguage();
+
+/* ---------- restoring an in-progress hand ----------
+   saveState() stores the whole hand (see the shared persistence
+   block); these rebuild it tile-for-tile and pick play back up.
+   Anything malformed fails validation and the caller falls back
+   to dealing a fresh hand with the restored scores. */
+function mjTilePairOk(a){
+  return Array.isArray(a) && a.length === 2 &&
+    typeof a[0] === "number" && isFinite(a[0]) && Math.floor(a[0]) === a[0] && a[0] > 0 &&
+    typeof a[1] === "number" && isFinite(a[1]) && Math.floor(a[1]) === a[1] && a[1] >= 0 && a[1] <= 33;
+}
+function mjTilePairsOk(arr){ return Array.isArray(arr) && arr.every(mjTilePairOk); }
+function mjTileDe(a){ return { uid: a[0], t: a[1] }; }
+function mjRestoreGame(g){
+  if (!g || typeof g !== "object") return false;
+  if (!mjTilePairsOk(g.wall)) return false;
+  if (!Array.isArray(g.players) || g.players.length !== 4) return false;
+  if (typeof g.current !== "number" || g.current < 0 || g.current > 3) return false;
+  if (g.phase !== "discard" && g.phase !== "claim") return false;
+  var total = g.wall.length, maxUid = 0;
+  function noteUid(a){ if (a[0] > maxUid) maxUid = a[0]; }
+  g.wall.forEach(noteUid);
+  for (var i = 0; i < 4; i++){
+    var p = g.players[i];
+    if (!p || !mjTilePairsOk(p.hand) || !mjTilePairsOk(p.discards) || !Array.isArray(p.melds)) return false;
+    total += p.hand.length + p.discards.length;
+    p.hand.forEach(noteUid); p.discards.forEach(noteUid);
+    for (var m = 0; m < p.melds.length; m++){
+      var md = p.melds[m];
+      if (!md || (md.kind !== "pong" && md.kind !== "kong" && md.kind !== "chow") || !mjTilePairsOk(md.tiles)) return false;
+      total += md.tiles.length;
+      md.tiles.forEach(noteUid);
+    }
+  }
+  if (g.lastDiscard != null){
+    if (typeof g.lastDiscard !== "object" || !mjTilePairOk(g.lastDiscard.tile)) return false;
+    if (typeof g.lastDiscard.from !== "number" || g.lastDiscard.from < 0 || g.lastDiscard.from > 3) return false;
+    noteUid(g.lastDiscard.tile);
+  }
+  /* tiles are conserved: wall + hands + discards + melds is always
+     the full 136 (the last discard is counted in its pool, and
+     lastDiscard only points at it) — anything else means the save
+     is not one of ours */
+  if (total !== 136) return false;
+  tokenSeq++;
+  S = {
+    token: tokenSeq,
+    wall: g.wall.map(mjTileDe),
+    players: g.players.map(function(p, idx){
+      return {
+        name: pname(idx),
+        hand: p.hand.map(mjTileDe),
+        melds: p.melds.map(function(md){
+          return { kind: md.kind, tiles: md.tiles.map(mjTileDe), concealed: !!md.concealed };
+        }),
+        discards: p.discards.map(mjTileDe)
+      };
+    }),
+    current: Math.floor(g.current),
+    phase: g.phase,
+    drawnUid: (typeof g.drawnUid === "number" && isFinite(g.drawnUid)) ? g.drawnUid : null,
+    lastDiscard: g.lastDiscard ? { tile: mjTileDe(g.lastDiscard.tile), from: Math.floor(g.lastDiscard.from) } : null,
+    over: false,
+    claimResolve: null,
+    winTile: null
+  };
+  if (maxUid >= uidSeq) uidSeq = maxUid + 1;
+  return true;
+}
+/* The board is back; now restart whichever step the reload
+   interrupted. The async turn flow died with the old page, so:
+   mid-claim → run claim resolution again for the same discard;
+   his discard turn → re-offer any self-drawn win/kong;
+   an AI's turn → let that seat play on. */
+function mjResumeGame(){
+  hideActionBar();
+  document.getElementById("winOverlay").classList.remove("show");
+  renderAll();
+  var tok = S.token;
+  if (S.phase === "claim" && S.lastDiscard){
+    resolveClaims(S.lastDiscard.from, S.lastDiscard.tile, tok);
+    return;
+  }
+  if (S.phase !== "discard") return;
+  if (S.current === 0){ checkSelfDrawn(); return; }
+  (async function(){
+    await wait(1400);
+    if (!alive(tok)) return;
+    /* a seat caught mid-kong holds a tile short — it draws its
+       replacement first, exactly as it would have before */
+    if (S.players[S.current].hand.length % 3 === 1) await drawTile(S.current, tok, true);
+    else await aiDiscardStep(S.current, tok);
+  })();
+}
+
 /* A saved match survives a reload: restore its scores, dealer and
-   hand number, then deal a fresh hand with them. Otherwise start a
-   brand-new match. */
+   hand number — and the in-progress hand itself, exactly as it was
+   left. The welcome line only appears when a save was genuinely
+   restored: __RESTORE is the snapshot of storage at load, so a
+   first visit (nothing stored) deals a brand-new match instead. */
 (function mjInit(){
   var sv = window.__RESTORE && window.__RESTORE.mj;
   var ok = sv && Array.isArray(sv.scores) && sv.scores.length === 4 &&
@@ -3045,6 +3187,7 @@ mjApplyLanguage();
   if (typeof sv.roundWind === "number" && isFinite(sv.roundWind)) G.roundWind = ((Math.round(sv.roundWind) % 4) + 4) % 4;
   log(L("<b>Welcome back.</b> Your match was saved — the scores are just as you left them.",
         "<b>欢迎回来。</b>对局已经保存 — 分数和你离开时一样。"));
+  if (sv.game && mjRestoreGame(sv.game)){ mjResumeGame(); return; }
   startRound();
 })();
 </script>
@@ -3637,6 +3780,10 @@ function finishSpin(result, bet){
   }
   slRenderAll();
   $("slCreditsVal").textContent = fmtCoins(window.WALLET);
+  /* persist the free-spins run as it stands now — spins left, bet,
+     and what the run has won — so a reload resumes it instead of
+     losing it (saveState drops the record once the run is over) */
+  saveState();
 }
 
 /* ================= events ================= */
@@ -3688,8 +3835,33 @@ document.addEventListener("walletchange", function(){
     if ($("cabinet").classList.contains("celebrate")) return;
     lights.forEach(function(s){ s.classList.toggle("on"); });
   }, 900);
+  /* A free-spins run interrupted by a reload resumes: restore the
+     spins left, the bet and the run's winnings from the load-time
+     snapshot, show the banner, and pick auto-play back up — right
+     away if Slots is on screen, otherwise the screenchange handler
+     resumes it when he opens Slots, as it does for a paused run. */
+  var sv = window.__RESTORE && window.__RESTORE.slots;
+  if (sv && typeof sv.freeSpins === "number" && isFinite(sv.freeSpins) && sv.freeSpins > 0){
+    slState.freeSpins = Math.floor(sv.freeSpins);
+    if (typeof sv.betIdx === "number" && isFinite(sv.betIdx) &&
+        Math.floor(sv.betIdx) >= 0 && Math.floor(sv.betIdx) < SL_BETS.length)
+      slState.betIdx = Math.floor(sv.betIdx);
+    if (typeof sv.freeTotal === "number" && isFinite(sv.freeTotal))
+      slState.freeTotal = Math.max(0, sv.freeTotal);
+  }
   slApplyLang();
-  slSetMessage(slT("goodLuck"), "");
+  if (slState.freeSpins > 0){
+    slRenderFsBanner();
+    $("spinBtn").disabled = true;
+    if (document.getElementById("scr-slots").classList.contains("active")){
+      slState.freeTimer = setTimeout(function(){
+        slState.freeTimer = null;
+        startSpin(true);
+      }, 1200);
+    }
+  } else {
+    slSetMessage(slT("goodLuck"), "");
+  }
   slAudio();
 })();
 </script>
