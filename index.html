@@ -99,7 +99,7 @@ button:focus-visible, a:focus-visible{outline:4px solid #fff; outline-offset:2px
   box-shadow:0 3px 0 rgba(0,0,0,.3), 0 6px 12px rgba(0,0,0,.25), inset 0 1px 0 #fff;
   transition:transform .08s ease, box-shadow .08s ease;
 }
-.back-btn .arr{font-size:24px; font-weight:900; line-height:.8; margin-right:2px}
+.back-btn .arr{width:.8em; height:.8em; flex:0 0 auto; margin-right:2px}
 .back-btn:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.3), inset 0 1px 0 #fff}
 .back-btn.hidden{visibility:hidden}
 .app-title{
@@ -368,7 +368,6 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 @media (max-width:560px){
   .app-header{gap:7px}
   .back-btn{min-height:44px; padding:6px 10px 7px 7px; font-size:15px}
-  .back-btn .arr{font-size:20px}
   .hdr-btn{min-height:44px; min-width:42px; padding:6px 8px; font-size:17px}
   .lang-btn{min-width:60px}
   .hdr-controls{gap:6px}
@@ -1337,6 +1336,27 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
       <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
     </a>
 
+    <a class="gcard" href="#" data-goto="lucky4d">
+      <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+      <div class="medallion"><div class="icon" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="img">
+          <circle cx="33" cy="34" r="17" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
+          <text x="33" y="42" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">8</text>
+          <circle cx="64" cy="27" r="14" fill="#f9dd8a" stroke="#b8860b" stroke-width="3"/>
+          <text x="64" y="34" text-anchor="middle" font-size="16" font-weight="900" fill="#7d0f0f">6</text>
+          <circle cx="61" cy="56" r="15" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
+          <text x="61" y="63" text-anchor="middle" font-size="17" font-weight="900" fill="#b91c1c">4</text>
+          <rect x="18" y="76" width="64" height="13" rx="5" fill="#7d0f0f" stroke="#e9bc4a" stroke-width="2"/>
+          <text x="50" y="86.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#f9dd8a" font-family="serif">4 D</text>
+        </svg>
+      </div></div>
+      <div class="card-text">
+        <div class="game-name" data-en="Lucky 4D" data-zh="万能4D">Lucky 4D</div>
+        <div class="game-desc" data-en="Pick 4 digits, watch the draw" data-zh="选 4 个数字，看开彩">Pick 4 digits, watch the draw</div>
+      </div>
+      <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
+    </a>
+
     <a class="gcard" href="#" data-goto="sicbo">
       <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
       <div class="medallion"><div class="icon" aria-hidden="true">
@@ -1363,27 +1383,6 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
       </div>
       <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
     </a>
-
-    <a class="gcard" href="#" data-goto="lucky4d">
-      <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
-      <div class="medallion"><div class="icon" aria-hidden="true">
-        <svg viewBox="0 0 100 100" role="img">
-          <circle cx="33" cy="34" r="17" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
-          <text x="33" y="42" text-anchor="middle" font-size="19" font-weight="900" fill="#b91c1c">8</text>
-          <circle cx="64" cy="27" r="14" fill="#f9dd8a" stroke="#b8860b" stroke-width="3"/>
-          <text x="64" y="34" text-anchor="middle" font-size="16" font-weight="900" fill="#7d0f0f">6</text>
-          <circle cx="61" cy="56" r="15" fill="#fffef8" stroke="#b8860b" stroke-width="3"/>
-          <text x="61" y="63" text-anchor="middle" font-size="17" font-weight="900" fill="#b91c1c">4</text>
-          <rect x="18" y="76" width="64" height="13" rx="5" fill="#7d0f0f" stroke="#e9bc4a" stroke-width="2"/>
-          <text x="50" y="86.5" text-anchor="middle" font-size="9.5" font-weight="900" fill="#f9dd8a" font-family="serif">4 D</text>
-        </svg>
-      </div></div>
-      <div class="card-text">
-        <div class="game-name" data-en="Lucky 4D" data-zh="万能4D">Lucky 4D</div>
-        <div class="game-desc" data-en="Pick 4 digits, watch the draw" data-zh="选 4 个数字，看开彩">Pick 4 digits, watch the draw</div>
-      </div>
-      <span class="play-pill"><span data-en="Play" data-zh="开始玩">Play</span> <span class="arrow" aria-hidden="true">›</span></span>
-    </a>
   </nav>
 
   <footer class="home-foot">
@@ -1394,7 +1393,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 <!-- ==================== CHINESE MAHJONG ==================== -->
 <section class="screen wide" id="scr-mahjong">
   <header class="app-header">
-    <button class="back-btn" type="button" data-goto="home"><span class="arr">‹</span><span data-en="Games" data-zh="游戏">Games</span></button>
+    <button class="back-btn" type="button" data-goto="home"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-en="Games" data-zh="游戏">Games</span></button>
     <h1 class="app-title" data-en="Chinese Mahjong" data-zh="中国麻将">Chinese Mahjong</h1>
     <div class="hdr-controls">
       <button class="hdr-btn sound-btn" type="button" aria-label="Sound on or off">🔊</button>
@@ -1509,7 +1508,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 <!-- ==================== SLOT MACHINE ==================== -->
 <section class="screen" id="scr-slots">
   <header class="app-header">
-    <button class="back-btn" type="button" data-goto="home"><span class="arr">‹</span><span data-en="Games" data-zh="游戏">Games</span></button>
+    <button class="back-btn" type="button" data-goto="home"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-en="Games" data-zh="游戏">Games</span></button>
     <h1 class="app-title" data-en="Slot Machine" data-zh="老虎机">Slot Machine</h1>
     <div class="hdr-controls">
       <button class="hdr-btn sound-btn" type="button" aria-label="Sound on or off">🔊</button>
@@ -1574,7 +1573,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 <!-- ==================== SIC BO ==================== -->
 <section class="screen" id="scr-sicbo">
   <header class="app-header">
-    <button class="back-btn" type="button" data-goto="home"><span class="arr">‹</span><span data-en="Games" data-zh="游戏">Games</span></button>
+    <button class="back-btn" type="button" data-goto="home"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-en="Games" data-zh="游戏">Games</span></button>
     <h1 class="app-title" data-en="Sic Bo" data-zh="骰宝">Sic Bo</h1>
     <div class="hdr-controls">
       <button class="hdr-btn sound-btn" type="button" aria-label="Sound on or off">🔊</button>
@@ -1616,7 +1615,7 @@ body.zh .game-name{font-family:var(--serif-zh); letter-spacing:.06em}
 <!-- ==================== LUCKY 4D ==================== -->
 <section class="screen" id="scr-lucky4d">
   <header class="app-header">
-    <button class="back-btn" type="button" data-goto="home"><span class="arr">‹</span><span data-en="Games" data-zh="游戏">Games</span></button>
+    <button class="back-btn" type="button" data-goto="home"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 4.5 8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-en="Games" data-zh="游戏">Games</span></button>
     <h1 class="app-title" data-en="Lucky 4D" data-zh="万能4D">Lucky 4D</h1>
     <div class="hdr-controls">
       <button class="hdr-btn sound-btn" type="button" aria-label="Sound on or off">🔊</button>
